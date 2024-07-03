@@ -16,6 +16,7 @@ const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const passport_1 = require("@nestjs/passport");
 const dotenv_1 = require("dotenv");
+const order_module_1 = require("./order/order.module");
 (0, dotenv_1.config)();
 let AppModule = class AppModule {
 };
@@ -28,7 +29,7 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
             }),
             mongoose_1.MongooseModule.forRoot('mongodb://localhost:27017/agrimed'),
-            auth_module_1.AuthModule, jwt_1.JwtModule],
+            auth_module_1.AuthModule, jwt_1.JwtModule, order_module_1.OrderModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

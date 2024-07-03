@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { env } from 'process';
 import { config } from 'dotenv';
+import { OrderModule } from './order/order.module';
 config();
 
 @Module({
@@ -17,7 +18,7 @@ config();
       isGlobal: true,}
     ),
   MongooseModule.forRoot('mongodb://localhost:27017/agrimed'),
-  AuthModule,JwtModule],
+  AuthModule,JwtModule, OrderModule],
   controllers: [AppController],
   providers: [AppService],
 })
