@@ -47,11 +47,11 @@ let Order = class Order {
 exports.Order = Order;
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], Order.prototype, "dateCommande", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], Order.prototype, "dateLivraison", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
@@ -64,6 +64,10 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'User', required: true }),
     __metadata("design:type", user_schema_1.User)
+], Order.prototype, "user", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
 ], Order.prototype, "client", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Site', required: true }),

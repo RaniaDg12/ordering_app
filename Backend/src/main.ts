@@ -4,7 +4,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { config } from 'dotenv';
 async function bootstrap() {
   config();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug'],
+  });
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var OrderController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
 const common_1 = require("@nestjs/common");
@@ -18,16 +19,22 @@ const passport_1 = require("@nestjs/passport");
 const order_service_1 = require("./order.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const update_order_dto_1 = require("./dto/update-order.dto");
-let OrderController = class OrderController {
+let OrderController = OrderController_1 = class OrderController {
     constructor(orderService) {
         this.orderService = orderService;
+        this.logger = new common_1.Logger(OrderController_1.name);
     }
     async create(createOrderDto, req) {
         const userId = req.user.userId;
         return this.orderService.create(createOrderDto, userId);
     }
-    findAll(query) {
-        return this.orderService.findAll(query);
+    async findAll(req) {
+        this.logger.debug(`User in request: ${req.user}`);
+        if (!req.user || !req.user.userId) {
+            throw new common_1.UnauthorizedException('User not authenticated');
+        }
+        const userId = req.user.userId;
+        return this.orderService.findAll(userId);
     }
     async findOne(id) {
         return this.orderService.findOne(id);
@@ -38,11 +45,12 @@ let OrderController = class OrderController {
     async remove(id) {
         return this.orderService.remove(id);
     }
-    async findByClient(clientId) {
-        return this.orderService.findByClient(clientId);
-    }
-    async findByEtatCommande(etatCommande) {
-        return this.orderService.findByEtatCommande(etatCommande);
+    async findByEtatCommande(etatCommande, req) {
+        if (!req.user || !req.user.userId) {
+            throw new common_1.UnauthorizedException('User not authenticated');
+        }
+        const userId = req.user.userId;
+        return this.orderService.findByEtatCommande(etatCommande, userId).then(orders => orders.filter(order => order.user.toString() === userId));
     }
 };
 exports.OrderController = OrderController;
@@ -56,13 +64,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "create", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -70,6 +80,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -78,6 +89,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "update", null);
 __decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -85,20 +97,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "remove", null);
 __decorate([
-    (0, common_1.Get)('/client/:clientId'),
-    __param(0, (0, common_1.Param)('clientId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], OrderController.prototype, "findByClient", null);
-__decorate([
-    (0, common_1.Get)('/status/:etatCommande'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.Get)('status/:etatCommande'),
     __param(0, (0, common_1.Param)('etatCommande')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findByEtatCommande", null);
-exports.OrderController = OrderController = __decorate([
+exports.OrderController = OrderController = OrderController_1 = __decorate([
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderController);

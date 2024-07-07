@@ -15,15 +15,11 @@ class CreateArticleOrderDto {
 }
 
 export class CreateOrderDto {
-  @IsDate()
   @IsNotEmpty()
-  @Type(() => Date)
-  dateCommande: Date;
+  dateCommande: string;
 
-  @IsDate()
   @IsNotEmpty()
-  @Type(() => Date)
-  dateLivraison: Date;
+  dateLivraison: string;
 
   @IsEnum(Status)
   @IsNotEmpty()

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { User } from '../../auth/schemas/user.schema';
+import { User } from 'src/auth/schemas/user.schema';
 
 export type OrderDocument = Order & Document;
 
@@ -30,10 +30,10 @@ export class ArticleOrder {
 @Schema()
 export class Order {
   @Prop({ required: true })
-  dateCommande: Date;
+  dateCommande: string;
 
   @Prop({ required: true })
-  dateLivraison: Date;
+  dateLivraison: string;
 
   @Prop({ required: true })
   etatCommande: Status;
@@ -42,7 +42,10 @@ export class Order {
   priority: Priority;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  client: User;
+  user: User;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true })
+  client: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Site', required: true })
   site: mongoose.Schema.Types.ObjectId;

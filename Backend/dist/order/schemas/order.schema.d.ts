@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import { User } from '../../auth/schemas/user.schema';
+import { User } from 'src/auth/schemas/user.schema';
 export type OrderDocument = Order & Document;
 export declare enum Priority {
     HIGH = "Eleve",
@@ -16,11 +16,12 @@ export declare class ArticleOrder {
     unit: string;
 }
 export declare class Order {
-    dateCommande: Date;
-    dateLivraison: Date;
+    dateCommande: string;
+    dateLivraison: string;
     etatCommande: Status;
     priority: Priority;
-    client: User;
+    user: User;
+    client: string;
     site: mongoose.Schema.Types.ObjectId;
     articles: ArticleOrder[];
     observation: string;

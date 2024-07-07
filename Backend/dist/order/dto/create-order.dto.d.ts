@@ -5,8 +5,8 @@ declare class CreateArticleOrderDto {
     unit: string;
 }
 export declare class CreateOrderDto {
-    dateCommande: Date;
-    dateLivraison: Date;
+    dateCommande: string;
+    dateLivraison: string;
     etatCommande: string;
     priority: Priority;
     client: string;

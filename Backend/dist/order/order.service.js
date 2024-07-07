@@ -11,27 +11,51 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var OrderService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const order_schema_1 = require("./schemas/order.schema");
 const jwt_1 = require("@nestjs/jwt");
-let OrderService = class OrderService {
+const order_schema_1 = require("./schemas/order.schema");
+let OrderService = OrderService_1 = class OrderService {
     constructor(orderModel, jwtService) {
         this.orderModel = orderModel;
         this.jwtService = jwtService;
+        this.logger = new common_1.Logger(OrderService_1.name);
     }
     async create(createOrderDto, userId) {
-        const createdOrder = new this.orderModel({
-            ...createOrderDto,
-            User: userId,
+        const { site, articles, ...rest } = createOrderDto;
+        this.logger.debug(`Creating order with site: ${site} and articles: ${JSON.stringify(articles)}`);
+        const foundSite = await this.orderModel.db.collection('sites').findOne({ name: site });
+        if (!foundSite) {
+            throw new common_1.NotFoundException(`Site with name ${site} not found`);
+        }
+        this.logger.debug(`Found site: ${JSON.stringify(foundSite)}`);
+        const transformedArticles = await Promise.all(articles.map(async (articleOrder) => {
+            const foundArticle = await this.orderModel.db.collection('articles').findOne({ name: articleOrder.article });
+            if (!foundArticle) {
+                throw new common_1.NotFoundException(`Article with name ${articleOrder.article} not found`);
+            }
+            this.logger.debug(`Found article: ${JSON.stringify(foundArticle)}`);
+            return {
+                ...articleOrder,
+                article: foundArticle._id,
+            };
+        }));
+        this.logger.debug(`Transformed articles: ${JSON.stringify(transformedArticles)}`);
+        const order = new this.orderModel({
+            ...rest,
+            site: foundSite._id,
+            articles: transformedArticles,
+            user: userId,
         });
-        return createdOrder.save();
+        this.logger.debug(`Final order object: ${JSON.stringify(order)}`);
+        return order.save();
     }
-    async findAll(query) {
-        return this.orderModel.find(query).exec();
+    async findAll(userId) {
+        return this.orderModel.find({ user: userId }).exec();
     }
     async findOne(id) {
         const order = await this.orderModel.findById(id).exec();
@@ -54,15 +78,12 @@ let OrderService = class OrderService {
         }
         return deletedOrder;
     }
-    async findByClient(clientId) {
-        return this.orderModel.find({ client: clientId }).exec();
-    }
-    async findByEtatCommande(etatCommande) {
-        return this.orderModel.find({ etatCommande }).exec();
+    async findByEtatCommande(etatCommande, userId) {
+        return this.orderModel.find({ etatCommande, user: userId }).exec();
     }
 };
 exports.OrderService = OrderService;
-exports.OrderService = OrderService = __decorate([
+exports.OrderService = OrderService = OrderService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(order_schema_1.Order.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,

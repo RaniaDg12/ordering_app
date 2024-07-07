@@ -6,7 +6,9 @@ const common_1 = require("@nestjs/common");
 const dotenv_1 = require("dotenv");
 async function bootstrap() {
     (0, dotenv_1.config)();
-    const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const app = await core_1.NestFactory.create(app_module_1.AppModule, {
+        logger: ['error', 'warn', 'log', 'debug'],
+    });
     app.useGlobalPipes(new common_1.ValidationPipe());
     await app.listen(3000);
 }

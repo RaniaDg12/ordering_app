@@ -32,16 +32,12 @@ class CreateOrderDto {
 }
 exports.CreateOrderDto = CreateOrderDto;
 __decorate([
-    (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_transformer_1.Type)(() => Date),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], CreateOrderDto.prototype, "dateCommande", void 0);
 __decorate([
-    (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_transformer_1.Type)(() => Date),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], CreateOrderDto.prototype, "dateLivraison", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(order_schema_1.Status),
