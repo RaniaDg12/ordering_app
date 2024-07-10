@@ -12,11 +12,36 @@ export enum Priority {
 
 export enum Status {
     SEND = 'Termine',
-    PROGRESS = 'En cours',
+    PROGRESS = 'Encours',
 }
 
 @Schema()
+export class Site {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const SiteSchema = SchemaFactory.createForClass(Site);
+
+@Schema()
+export class Client {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const ClientSchema = SchemaFactory.createForClass(Site);
+
+@Schema()
+export class Article extends Document {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const ArticleSchema = SchemaFactory.createForClass(Article);
+
+@Schema()
 export class ArticleOrder {
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true })
   article: mongoose.Schema.Types.ObjectId;
 
@@ -26,6 +51,10 @@ export class ArticleOrder {
   @Prop({ required: true })
   unit: string;
 }
+
+
+
+
 
 @Schema()
 export class Order {
@@ -57,5 +86,5 @@ export class Order {
   observation: string;
 }
 
-export const OrderSchema = SchemaFactory.createForClass(Order);
 export const ArticleOrderSchema = SchemaFactory.createForClass(ArticleOrder);
+export const OrderSchema = SchemaFactory.createForClass(Order);

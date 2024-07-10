@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderDocument } from './schemas/order.schema';
+import * as moment from 'moment';
 
 
 @Injectable()
@@ -16,23 +17,21 @@ export class OrderService {
 
   async create(createOrderDto: CreateOrderDto, userId: string): Promise<Order> {
     const { site, client, articles, ...rest } = createOrderDto;
-
-    this.logger.debug(`Creating order with site: ${site}, client: ${client}, and articles: ${JSON.stringify(articles)}`);
-
+  
     // Find the Site by name
     const foundSite = await this.orderModel.db.collection('sites').findOne({ name: site });
     if (!foundSite) {
       throw new NotFoundException(`Site with name ${site} not found`);
     }
     this.logger.debug(`Found site: ${JSON.stringify(foundSite)}`);
-
+  
     // Find the Client by name
     const foundClient = await this.orderModel.db.collection('clients').findOne({ name: client });
     if (!foundClient) {
       throw new NotFoundException(`Client with name ${client} not found`);
     }
     this.logger.debug(`Found client: ${JSON.stringify(foundClient)}`);
-
+  
     // Transform article names to ObjectIds
     const transformedArticles = await Promise.all(
       articles.map(async articleOrder => {
@@ -40,16 +39,15 @@ export class OrderService {
         if (!foundArticle) {
           throw new NotFoundException(`Article with name ${articleOrder.article} not found`);
         }
-        this.logger.debug(`Found article: ${JSON.stringify(foundArticle)}`);
         return {
-          ...articleOrder,
           article: foundArticle._id,
+          quantity: articleOrder.quantity,
+          unit: articleOrder.unit,
         };
       })
     );
-
-    this.logger.debug(`Transformed articles: ${JSON.stringify(transformedArticles)}`);
-
+  
+    // Create the order with the transformed articles array
     const order = new this.orderModel({
       ...rest,
       site: foundSite._id,
@@ -57,16 +55,38 @@ export class OrderService {
       articles: transformedArticles,
       user: userId,
     });
-
-    this.logger.debug(`Final order object: ${JSON.stringify(order)}`);
-
-    return order.save();
+  
+    await order.save();
+    return order;
   }
+  
 
 
-  async findAll(userId: string): Promise<Order[]> {
-    return this.orderModel.find({ user: userId }).exec();
+  async findAll(userId: string): Promise<any[]> {
+      const orders = await this.orderModel
+        .find({ user: userId })
+        .populate('client', 'name')
+        .populate('site', 'name')
+        .populate('articles.article', 'name')
+        .lean()
+        .exec();
+  
+      // Transform the output to only include names instead of full objects
+      return orders.map(order => ({
+        ...order,
+        client: (order.client as any).name,
+        site: (order.site as any).name,
+        dateCommande: moment(order.dateCommande).format('YYYY-MM-DD'),
+        dateLivraison: moment(order.dateLivraison).format('YYYY-MM-DD'),
+        articles: order.articles.map(articleOrder => ({
+          name: (articleOrder.article as any).name,
+          quantity: articleOrder.quantity,
+          unit: articleOrder.unit,
+        })),
+      }));
   }
+  
+  
 
   async findOne(id: string): Promise<Order> {
     const order = await this.orderModel.findById(id).exec();
@@ -92,8 +112,29 @@ export class OrderService {
     return deletedOrder;
   }
 
-  async findByEtatCommande(etatCommande: string, userId: string): Promise<Order[]> {
-    return this.orderModel.find({ etatCommande, user: userId  }).exec();
+  async findByEtatCommande(etatCommande: string, userId: string): Promise<any[]> {
+    const orders = await this.orderModel
+      .find({ etatCommande, user: userId })
+      .populate('client', 'name')
+      .populate('site', 'name')
+      .populate('articles.article', 'name')
+      .lean()
+      .exec();
+  
+    // Transform the output to only include names instead of full objects
+    return orders.map(order => ({
+      ...order,
+      client: (order.client as any).name,
+      site: (order.site as any).name,
+      dateCommande: moment(order.dateCommande).format('YYYY-MM-DD'),
+      dateLivraison: moment(order.dateLivraison).format('YYYY-MM-DD'),
+      articles: order.articles.map(articleOrder => ({
+        name: (articleOrder.article as any).name,
+        quantity: articleOrder.quantity,
+        unit: articleOrder.unit,
+      })),
+    }));
   }
+
 
 }
