@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:easy_stepper/easy_stepper.dart';
 import 'package:provider/provider.dart';
-import '../models/orderList.dart';
+import '../models/order.dart';
+import '../services/authservice.dart';
+import 'clientStep.dart';
+import 'articlesStep.dart';
+import 'autresStep.dart';
 
 class AddOrder extends StatefulWidget {
   @override
@@ -14,9 +19,9 @@ class _AddOrderPageState extends State<AddOrder> {
     'client': '',
     'dateCommande': '',
     'dateLivraison': '',
-    'articles': [],
-    'priority': '',
-    'observation': ''
+    'articles': <Article>[],
+    'priority': Priority.faible,
+    'observation': '',
   };
 
   @override
@@ -24,65 +29,113 @@ class _AddOrderPageState extends State<AddOrder> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Nouvelle Commande'),
-        centerTitle: true,
+        backgroundColor: Colors.green,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+        ),
       ),
-      body: Stepper(
-        type: StepperType.horizontal, // Changed to horizontal view
-        currentStep: _currentStep,
-        onStepContinue: () {
-          if (_currentStep < 2) {
-            setState(() {
-              _currentStep++;
-            });
-          } else {
-            _showConfirmationDialog();
-          }
-        },
-        onStepCancel: () {
-          if (_currentStep > 0) {
-            setState(() {
-              _currentStep--;
-            });
-          } else {
-            Navigator.pop(context);
-          }
-        },
-        steps: [
-          Step(
-            title: Text('Client', style: TextStyle(color: Colors.green)),
-            subtitle: Text(''), // No subtitle needed
-            content: ClientStep(orderData: _orderData),
-            isActive: _currentStep >= 0,
-          ),
-          Step(
-            title: Text('Articles', style: TextStyle(color: Colors.green)),
-            subtitle: Text(''), // No subtitle needed
-            content: ArticlesStep(orderData: _orderData),
-            isActive: _currentStep >= 1,
-          ),
-          Step(
-            title: Text('Autres', style: TextStyle(color: Colors.green)),
-            subtitle: Text(''), // No subtitle needed
-            content: AutresStep(orderData: _orderData),
-            isActive: _currentStep >= 2,
-          ),
-        ],
-        controlsBuilder: (BuildContext context, ControlsDetails details) {
-          return Row(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            EasyStepper(
+              activeStep: _currentStep,
+              stepShape: StepShape.circle,
+              stepRadius: 32,
+              finishedStepBorderColor: Colors.green,
+              finishedStepTextColor: Colors.green,
+              finishedStepBackgroundColor: Colors.green,
+              activeStepIconColor: Colors.green,
+              showLoadingAnimation: false,
+              steps: [
+                EasyStep(
+                  icon: Icon(Icons.person),
+                  customTitle: const Text(
+                    'Client',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  ),
+                ),
+                EasyStep(
+                  icon: Icon(Icons.article),
+                  customTitle: const Text(
+                    'Articles',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  ),
+                ),
+                EasyStep(
+                  icon: Icon(Icons.more_horiz),
+                  customTitle: const Text(
+                    'Autres',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  ),
+                ),
+              ],
+              onStepReached: (index) {
+                setState(() {
+                  _currentStep = index;
+                });
+              },
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: _getStepContent(),
+              ),
+            ),
+            _buildStepControls(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getStepContent() {
+    switch (_currentStep) {
+      case 0:
+        return ClientStep(orderData: _orderData);
+      case 1:
+        return ArticlesStep(orderData: _orderData);
+      case 2:
+        return AutresStep(orderData: _orderData);
+      default:
+        return ClientStep(orderData: _orderData);
+    }
+  }
+
+  Widget _buildStepControls() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 20.0, right: 10.0),
+      child: Column(
+        children: [
+          SizedBox(height: 26),
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               if (_currentStep != 0)
                 ElevatedButton(
-                  onPressed: details.onStepCancel,
+                  onPressed: _currentStep > 0
+                      ? () {
+                    setState(() {
+                      _currentStep--;
+                    });
+                  }
+                      : null,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    child: Text('Précédent',
+                    child: Text(
+                      'Précédent',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
@@ -96,10 +149,17 @@ class _AddOrderPageState extends State<AddOrder> {
                 ),
               SizedBox(width: 8),
               ElevatedButton(
-                onPressed: details.onStepContinue,
+                onPressed: _currentStep < 2
+                    ? () {
+                  setState(() {
+                    _currentStep++;
+                  });
+                }
+                    : _showConfirmationDialog,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                  child: Text(_currentStep == 2 ? 'Valider' : 'Suivant',
+                  child: Text(
+                    _currentStep == 2 ? 'Valider' : 'Suivant',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
@@ -112,8 +172,8 @@ class _AddOrderPageState extends State<AddOrder> {
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -123,8 +183,23 @@ class _AddOrderPageState extends State<AddOrder> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation'),
-          content: Text('Are you sure you want to add this order?'),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Text(
+            'Confirmation',
+            style: TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'Vous êtes sûr d\'ajouter cette commande ?',
+            style: TextStyle(
+              color: Colors.black87,
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -133,14 +208,20 @@ class _AddOrderPageState extends State<AddOrder> {
                   _currentStep = 0;
                 });
               },
-              child: Text('Annuler'),
+              child: Text(
+                'Annuler',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 _addOrder();
               },
-              child: Text('Valider'),
+              child: Text(
+                'Valider',
+                style: TextStyle(color: Colors.green),
+              ),
             ),
           ],
         );
@@ -148,207 +229,20 @@ class _AddOrderPageState extends State<AddOrder> {
     );
   }
 
-  void _addOrder() {
+  void _addOrder() async {
     final orderModel = Provider.of<OrderModel>(context, listen: false);
     final newOrder = Order(
-      orderId: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '', // Backend will assign ID
+      site: _orderData['site'] as String,
       clientName: _orderData['client'] as String,
-      date: _orderData['dateCommande'] as String,
-      articlesCount: (_orderData['articles'] as List).length,
+      dateCommande: _orderData['dateCommande'] as String,
+      dateLivraison: _orderData['dateLivraison'] as String,
+      articles: _orderData['articles'] as List<Article>,
+      priority: _orderData['priority'] as Priority,
+      etatCommande: Status.Encours,
+      observation: _orderData['observation'] as String,
     );
-    orderModel.addOrder(newOrder);
+    await orderModel.createOrder(newOrder);
     Navigator.pop(context);
-  }
-}
-
-class ClientStep extends StatelessWidget {
-  final Map<String, dynamic> orderData;
-
-  ClientStep({required this.orderData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Choisir un site',
-            prefixIcon: Icon(Icons.map),
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(child: Text('Site 1'), value: 'site1'),
-            DropdownMenuItem(child: Text('Site 2'), value: 'site2'),
-          ],
-          onChanged: (value) {
-            orderData['site'] = value!;
-          },
-        ),
-        SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Choisir un client',
-            prefixIcon: Icon(Icons.person),
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(child: Text('Client A'), value: 'clientA'),
-            DropdownMenuItem(child: Text('Client B'), value: 'clientB'),
-          ],
-          onChanged: (value) {
-            orderData['client'] = value!;
-          },
-        ),
-        SizedBox(height: 16),
-        TextField(
-          decoration: InputDecoration(
-            labelText: 'Date de Commande',
-            border: OutlineInputBorder(),
-          ),
-          onTap: () {
-            // Add date picker functionality
-          },
-          onChanged: (value) {
-            orderData['dateCommande'] = value;
-          },
-        ),
-        SizedBox(height: 16),
-        TextField(
-          decoration: InputDecoration(
-            labelText: 'Date de Livraison',
-            border: OutlineInputBorder(),
-          ),
-          onTap: () {
-            // Add date picker functionality
-          },
-          onChanged: (value) {
-            orderData['dateLivraison'] = value;
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class ArticlesStep extends StatefulWidget {
-  final Map<String, dynamic> orderData;
-
-  ArticlesStep({required this.orderData});
-
-  @override
-  _ArticlesStepState createState() => _ArticlesStepState();
-}
-
-class _ArticlesStepState extends State<ArticlesStep> {
-  final _articleController = TextEditingController();
-  final _unitController = TextEditingController();
-  final _quantityController = TextEditingController();
-
-  void _addArticle() {
-    setState(() {
-      widget.orderData['articles'].add({
-        'article': _articleController.text,
-        'unit': _unitController.text,
-        'quantity': _quantityController.text,
-      });
-      _articleController.clear();
-      _unitController.clear();
-      _quantityController.clear();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Choisir un article',
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(child: Text('Article 1'), value: 'article1'),
-            DropdownMenuItem(child: Text('Article 2'), value: 'article2'),
-          ],
-          onChanged: (value) {
-            _articleController.text = value!;
-          },
-        ),
-        SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            labelText: 'Choisir une unité',
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(child: Text('Unit 1'), value: 'unit1'),
-            DropdownMenuItem(child: Text('Unit 2'), value: 'unit2'),
-          ],
-          onChanged: (value) {
-            _unitController.text = value!;
-          },
-        ),
-        SizedBox(height: 16),
-        TextField(
-          controller: _quantityController,
-          decoration: InputDecoration(
-            labelText: 'Saisir quantité',
-            border: OutlineInputBorder(),
-          ),
-          keyboardType: TextInputType.number,
-        ),
-        SizedBox(height: 16),
-        ElevatedButton.icon(
-          onPressed: _addArticle,
-          icon: Icon(Icons.add),
-          label: Text('Ajouter un article'),
-        ),
-        SizedBox(height: 16),
-        ...widget.orderData['articles'].map<Widget>((article) {
-          return Card(
-            child: ListTile(
-              title: Text(article['article']),
-              trailing: Text(
-                '${article['quantity']} ${article['unit']}',
-                style: TextStyle(color: Colors.green),
-              ),
-            ),
-          );
-        }).toList(),
-      ],
-    );
-  }
-}
-
-class AutresStep extends StatelessWidget {
-  final Map<String, dynamic> orderData;
-
-  AutresStep({required this.orderData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          decoration: InputDecoration(
-            labelText: 'Choisir priorité commande',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) {
-            orderData['priority'] = value;
-          },
-        ),
-        SizedBox(height: 16),
-        TextField(
-          decoration: InputDecoration(
-            labelText: 'Observation',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) {
-            orderData['observation'] = value;
-          },
-        ),
-      ],
-    );
   }
 }
