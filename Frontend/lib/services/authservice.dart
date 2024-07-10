@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   final String baseUrl = 'http://192.168.56.1:3000';
   final storage = FlutterSecureStorage();
 
-  Future<String?> signIn(String username, String password) async {
+  Future<String?> signIn(BuildContext context, String username, String password) async {
     final url = Uri.parse('$baseUrl/auth/signin?name=$username&password=$password');
     final response = await http.get(
       url,
@@ -17,10 +18,10 @@ class AuthService {
       final responseData = jsonDecode(response.body);
       final token = responseData['token'];
       await storage.write(key: 'token', value: token);
-
+      Navigator.pushReplacementNamed(context, '/orderlist');
     } else {
       final responseData = jsonDecode(response.body);
-      return responseData['message'];
+      throw Exception(responseData['message']);
     }
   }
 
@@ -28,7 +29,8 @@ class AuthService {
     await storage.delete(key: 'token');
   }
 
-  Future<String?> getToken() async {
-    return await storage.read(key: 'token');
+  Future<String?> getCurrentUserToken() async {
+    String? token = await storage.read(key: 'token');
+    return token;
   }
 }
