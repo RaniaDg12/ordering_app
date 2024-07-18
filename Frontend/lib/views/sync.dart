@@ -7,27 +7,41 @@ class Synchronisation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-        title: const Text('Synchronisation'),
-        backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(10),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70.0),
+        child: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+          ),
+          title: Text(
+            "Synchronisation",
+            style: TextStyle(color: Colors.white),
+          ),
+          flexibleSpace: ClipRRect(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.green.shade600, Colors.green.shade300],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
           ),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ChangeNotifierProvider(
-          key: UniqueKey(),
-          create: (_) => OrderModel()..fetchOrders(), // Initialize OrderModel and fetch orders
+          key: Key('orderModel'),
+          create: (_) => OrderModel()..fetchLocalOrders(),
           child: Column(
             children: [
               Expanded(
@@ -44,7 +58,7 @@ class Synchronisation extends StatelessWidget {
                             subtitle: Text(order.clientName),
                             trailing: Text(
                               '${order.articles.length} articles',
-                              style: TextStyle(color: Colors.green),
+                              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                             ),
                             onTap: () {
                               Navigator.push(
@@ -64,8 +78,10 @@ class Synchronisation extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 14.0, top: 14.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Add synchronization logic here
+                  onPressed: () async {
+                    final orderModel = Provider.of<OrderModel>(context, listen: false);
+                    await orderModel.synchronizeLocalOrders(context);
+                    await orderModel.fetchLocalOrders();
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
