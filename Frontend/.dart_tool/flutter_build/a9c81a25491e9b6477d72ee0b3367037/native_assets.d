@@ -1,1 +1,0 @@
- C:\\Users\\rania\\OneDrive\\Desktop\\ordering_app\\Frontend\\.dart_tool\\flutter_build\\a9c81a25491e9b6477d72ee0b3367037\\native_assets.yaml: 
