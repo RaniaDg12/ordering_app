@@ -1,4 +1,0 @@
-#Thu Jun 27 09:23:30 WAT 2024
-base.0=C\:\\Users\\rania\\StudioProjects\\ordering_app\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
