@@ -23,7 +23,7 @@ export class OrderService {
   private readonly clientService: ClientService,) {}
 
   async create(createOrderDto: CreateOrderDto, userId: string): Promise<Order> {
-    const { site, client, articles, ...rest } = createOrderDto;
+    const { site, client, articles, etatCommande = 'Envoye', ...rest } = createOrderDto;
   
     // Find the Site by name
     const foundSite = await this.siteService.findByName(site);
@@ -51,6 +51,7 @@ export class OrderService {
       site: foundSite._id,
       client: foundClient._id,
       articles: transformedArticles,
+      etatCommande: 'Envoye',
       user: userId,
     });
   

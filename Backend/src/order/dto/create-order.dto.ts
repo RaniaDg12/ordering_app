@@ -1,18 +1,8 @@
 import { IsDate, IsNotEmpty, IsString, IsEnum, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Priority, Status } from '../schemas/order.schema';
+import { Priority} from '../schemas/order.schema';
+import { CreateArticleOrderDto } from 'src/article/dto/create-articleorder.dto';
 
-class CreateArticleOrderDto {
-  @IsNotEmpty()
-  article: string; 
-
-  @IsNotEmpty()
-  quantity: number;
-
-  @IsString()
-  @IsNotEmpty()
-  unit: string;
-}
 
 export class CreateOrderDto {
   @IsNotEmpty()
@@ -21,9 +11,9 @@ export class CreateOrderDto {
   @IsNotEmpty()
   dateLivraison: string;
 
-  @IsEnum(Status)
-  @IsNotEmpty()
-  etatCommande: string;
+  @IsString()
+  @IsOptional()  
+  etatCommande?: string;
 
   @IsEnum(Priority)
   @IsNotEmpty()

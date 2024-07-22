@@ -11,22 +11,6 @@ export enum Priority {
     LOW = 'Faible',
 }
 
-export enum Status {
-    SEND = 'Termine',
-    PROGRESS = 'Encours',
-}
-
-@Schema()
-export class Site {
-  @Prop({ required: true })
-  name: string;
-}
-
-export const SiteSchema = SchemaFactory.createForClass(Site);
-
-
-
-
 
 
 @Schema()
@@ -37,8 +21,8 @@ export class Order {
   @Prop({ required: true })
   dateLivraison: string;
 
-  @Prop({ required: true })
-  etatCommande: Status;
+  @Prop({ required: true, default: 'Encours' })
+  etatCommande: string;
 
   @Prop({ required: true })
   priority: Priority;
