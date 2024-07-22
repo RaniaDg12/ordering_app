@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { ArticleOrder } from 'src/article/schemas/articleOrder.schema';
 import { User } from 'src/auth/schemas/user.schema';
 
 export type OrderDocument = Order & Document;
@@ -23,34 +24,6 @@ export class Site {
 
 export const SiteSchema = SchemaFactory.createForClass(Site);
 
-@Schema()
-export class Client {
-  @Prop({ required: true })
-  name: string;
-}
-
-export const ClientSchema = SchemaFactory.createForClass(Site);
-
-@Schema()
-export class Article extends Document {
-  @Prop({ required: true })
-  name: string;
-}
-
-export const ArticleSchema = SchemaFactory.createForClass(Article);
-
-@Schema()
-export class ArticleOrder {
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: true })
-  article: mongoose.Schema.Types.ObjectId;
-
-  @Prop({ required: true })
-  quantity: number;
-
-  @Prop({ required: true })
-  unit: string;
-}
 
 
 
@@ -86,5 +59,5 @@ export class Order {
   observation: string;
 }
 
-export const ArticleOrderSchema = SchemaFactory.createForClass(ArticleOrder);
+
 export const OrderSchema = SchemaFactory.createForClass(Order);

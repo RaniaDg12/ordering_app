@@ -5,7 +5,11 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderDocument } from './schemas/order.schema';
+import { ArticleService } from 'src/article/article.service';
+import { ClientService } from 'src/client/client.service';
+import { SiteService } from 'src/site/site.service';
 import * as moment from 'moment';
+
 
 
 @Injectable()
@@ -13,33 +17,27 @@ export class OrderService {
   private readonly logger = new Logger(OrderService.name);
   
   constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>, 
-  private readonly jwtService: JwtService,) {}
+  private readonly jwtService: JwtService,
+  private readonly articleService: ArticleService,
+  private readonly siteService: SiteService,
+  private readonly clientService: ClientService,) {}
 
   async create(createOrderDto: CreateOrderDto, userId: string): Promise<Order> {
     const { site, client, articles, ...rest } = createOrderDto;
   
     // Find the Site by name
-    const foundSite = await this.orderModel.db.collection('sites').findOne({ name: site });
-    if (!foundSite) {
-      throw new NotFoundException(`Site with name ${site} not found`);
-    }
+    const foundSite = await this.siteService.findByName(site);
     this.logger.debug(`Found site: ${JSON.stringify(foundSite)}`);
   
     // Find the Client by name
-    const foundClient = await this.orderModel.db.collection('clients').findOne({ name: client });
-    if (!foundClient) {
-      throw new NotFoundException(`Client with name ${client} not found`);
-    }
+    const foundClient = await this.clientService.findByName(client);
     this.logger.debug(`Found client: ${JSON.stringify(foundClient)}`);
   
     // Transform article names to ObjectIds
     const transformedArticles = await Promise.all(
       articles.map(async articleOrder => {
-        const foundArticle = await this.orderModel.db.collection('articles').findOne({ name: articleOrder.article });
-        if (!foundArticle) {
-          throw new NotFoundException(`Article with name ${articleOrder.article} not found`);
-        }
-        return {
+      const foundArticle = await this.articleService.findByName(articleOrder.article);
+       return {
           article: foundArticle._id,
           quantity: articleOrder.quantity,
           unit: articleOrder.unit,
