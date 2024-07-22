@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -88,12 +88,39 @@ export class OrderService {
   
   
 
-  async findOne(id: string): Promise<Order> {
-    const order = await this.orderModel.findById(id).exec();
+  async findOne(id: string, userId: string): Promise<any> {
+    // Check if the id is a valid ObjectId
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(id);
+    if (!isValidObjectId) {
+      throw new NotFoundException(`Invalid ID provided: ${id}`);
+    }
+  
+    // Find the order by id and populate the necessary fields
+    const order = await this.orderModel
+      .findById(id)
+      .populate('client', 'name')
+      .populate('site', 'name')
+      .populate('articles.article', 'name')
+      .lean()
+      .exec();
+  
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
-    return order;
+  
+    // Transform the order to the desired format
+    return {
+      ...order,
+      client: (order.client as any).name,
+      site: (order.site as any).name,
+      dateCommande: moment(order.dateCommande).format('YYYY-MM-DD'),
+      dateLivraison: moment(order.dateLivraison).format('YYYY-MM-DD'),
+      articles: order.articles.map(articleOrder => ({
+        name: (articleOrder.article as any).name,
+        quantity: articleOrder.quantity,
+        unit: articleOrder.unit,
+      })),
+    };
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order> {
@@ -136,5 +163,9 @@ export class OrderService {
     }));
   }
 
+  
 
 }
+
+
+

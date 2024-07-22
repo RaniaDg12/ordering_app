@@ -9,9 +9,9 @@ export declare class OrderService {
     private readonly logger;
     constructor(orderModel: Model<OrderDocument>, jwtService: JwtService);
     create(createOrderDto: CreateOrderDto, userId: string): Promise<Order>;
-    findAll(userId: string): Promise<Order[]>;
-    findOne(id: string): Promise<Order>;
+    findAll(userId: string): Promise<any[]>;
+    findOne(id: string, userId: string): Promise<any>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order>;
     remove(id: string): Promise<Order>;
-    findByEtatCommande(etatCommande: string, userId: string): Promise<Order[]>;
+    findByEtatCommande(etatCommande: string, userId: string): Promise<any[]>;
 }

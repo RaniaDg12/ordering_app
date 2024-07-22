@@ -33,8 +33,9 @@ export class OrderController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Order> {
-    return this.orderService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req): Promise<any> {
+    const userId = req.user.userId;
+    return this.orderService.findOne(id, userId);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -61,6 +62,7 @@ export class OrderController {
       orders.filter(order => order.user.toString() === userId),
     ); 
   }
+
   
 }
 

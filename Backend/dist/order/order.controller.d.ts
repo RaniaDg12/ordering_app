@@ -8,7 +8,7 @@ export declare class OrderController {
     constructor(orderService: OrderService);
     create(createOrderDto: CreateOrderDto, req: any): Promise<Order>;
     findAll(req: any): Promise<Order[]>;
-    findOne(id: string): Promise<Order>;
+    findOne(id: string, req: any): Promise<any>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<Order>;
     remove(id: string): Promise<Order>;
     findByEtatCommande(etatCommande: string, req: any): Promise<Order[]>;
