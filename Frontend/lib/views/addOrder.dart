@@ -1,32 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:provider/provider.dart';
+import '../providers/orderProvider.dart';
+import '../providers/OrderStepProvider.dart';
+import '../models/enums/priority.dart';
 import '../models/order.dart';
+import '../models/article.dart';
 import 'clientStep.dart';
 import 'articlesStep.dart';
 import 'autresStep.dart';
 
 class AddOrder extends StatelessWidget {
+  const AddOrder({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => OrderModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => OrderModel()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = OrderStepProvider();
+            provider.setCurrentStep(0); // Ensure to start at the Client step
+            provider.resetOrderData(); // Reset the order data
+            return provider;
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(70.0),
+          preferredSize: const Size.fromHeight(70.0),
           child: AppBar(
             leading: IconButton(
               onPressed: () {
+                // Dispose of the provider when navigating away
+                context.read<OrderStepProvider>().resetOrderData();
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
-            title: Text(
+            title: const Text(
               "Nouvelle commande",
               style: TextStyle(color: Colors.white),
             ),
             flexibleSpace: ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
               ),
@@ -44,11 +62,11 @@ class AddOrder extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Consumer<OrderModel>(
-            builder: (context, orderModel, _) => Column(
+          child: Consumer<OrderStepProvider>(
+            builder: (context, StepProvider, _) => Column(
               children: [
                 EasyStepper(
-                  activeStep: orderModel.currentStep,
+                  activeStep: StepProvider.currentStep,
                   stepShape: StepShape.circle,
                   stepRadius: 32,
                   finishedStepBorderColor: Colors.green,
@@ -56,10 +74,10 @@ class AddOrder extends StatelessWidget {
                   finishedStepBackgroundColor: Colors.green,
                   activeStepIconColor: Colors.green,
                   showLoadingAnimation: false,
-                  steps: [
+                  steps: const [
                     EasyStep(
                       icon: Icon(Icons.person),
-                      customTitle: const Text(
+                      customTitle: Text(
                         'Client',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, color: Colors.green),
@@ -67,7 +85,7 @@ class AddOrder extends StatelessWidget {
                     ),
                     EasyStep(
                       icon: Icon(Icons.article),
-                      customTitle: const Text(
+                      customTitle: Text(
                         'Articles',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, color: Colors.green),
@@ -75,7 +93,7 @@ class AddOrder extends StatelessWidget {
                     ),
                     EasyStep(
                       icon: Icon(Icons.more_horiz),
-                      customTitle: const Text(
+                      customTitle: Text(
                         'Autres',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16, color: Colors.green),
@@ -83,12 +101,12 @@ class AddOrder extends StatelessWidget {
                     ),
                   ],
                   onStepReached: (index) {
-                    orderModel.setCurrentStep(index);
+                    StepProvider.setCurrentStep(index);
                   },
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                     child: _getStepContent(),
                   ),
                 ),
@@ -102,91 +120,91 @@ class AddOrder extends StatelessWidget {
   }
 
   Widget _getStepContent() {
-    return Consumer<OrderModel>(
-      builder: (context, orderModel, child) {
-        switch (orderModel.currentStep) {
+    return Consumer<OrderStepProvider>(
+      builder: (context, StepProvider, child) {
+        switch (StepProvider.currentStep) {
           case 0:
             return ClientStep(
-              orderData: orderModel.orderData,
+              orderData: StepProvider.orderData,
               onUpdate: (key, value) {
-                orderModel.updateOrderData(key, value);
+                StepProvider.updateOrderData(key, value);
               },
             );
           case 1:
             return ArticlesStep(
-              orderData: orderModel.orderData,
+              orderData: StepProvider.orderData,
               onUpdate: (key, value) {
-                orderModel.updateOrderData(key, value);
+                StepProvider.updateOrderData(key, value);
               },
             );
           case 2:
             return AutresStep(
-              orderData: orderModel.orderData,
+              orderData: StepProvider.orderData,
               onUpdate: (key, value) {
-                orderModel.updateOrderData(key, value);
+                StepProvider.updateOrderData(key, value);
               },
             );
           default:
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
         }
       },
     );
   }
 
   Widget _buildStepControls() {
-    return Consumer<OrderModel>(
-      builder: (context, orderModel, child) {
+    return Consumer<OrderStepProvider>(
+      builder: (context, StepProvider, child) {
         return Padding(
-          padding: EdgeInsets.only(bottom: 20.0, right: 10.0),
+          padding: const EdgeInsets.only(bottom: 20.0, right: 10.0),
           child: Column(
             children: [
-              SizedBox(height: 26),
+              const SizedBox(height: 26),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  if (orderModel.currentStep != 0)
+                  if (StepProvider.currentStep != 0)
                     ElevatedButton(
-                      onPressed: orderModel.currentStep > 0
+                      onPressed: StepProvider.currentStep > 0
                           ? () {
-                        orderModel.decrementStep();
+                        StepProvider.decrementStep();
                       }
                           : null,
-                      child: Padding(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                         child: Text(
                           'Précédent',
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 6),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
                     ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: orderModel.currentStep < 2
+                    onPressed: StepProvider.currentStep < 2
                         ? () {
-                      orderModel.incrementStep();
+                      StepProvider.incrementStep();
                     }
                         : () {
-                      _showConfirmationDialog(context, orderModel.orderData);
+                      _showConfirmationDialog(context, StepProvider.orderData);
                     },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                      child: Text(
-                        orderModel.currentStep == 2 ? 'Valider' : 'Suivant',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      child: Text(
+                        StepProvider.currentStep == 2 ? 'Valider' : 'Suivant',
+                        style: const TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                   ),
@@ -204,15 +222,15 @@ class AddOrder extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation', style: TextStyle(color: Colors.green)),
-          content: Text('Êtes-vous sûr de valider la commande?', style: TextStyle(color: Colors.black)),
+          title: const Text('Confirmation', style: TextStyle(color: Colors.green)),
+          content: const Text('Êtes-vous sûr de valider la commande?', style: TextStyle(color: Colors.black)),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                context.read<OrderModel>().setCurrentStep(0);
+                context.read<OrderStepProvider>().setCurrentStep(0);
               },
-              child: Text('Annuler', style: TextStyle(color: Colors.red)),
+              child: const Text('Annuler', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () async {
@@ -232,7 +250,7 @@ class AddOrder extends StatelessWidget {
                   dateLivraison: orderData['dateLivraison'] as String,
                   articles: articles,
                   priority: orderData['priority'] as Priority,
-                  etatCommande: Status.Encours,
+                  etatCommande: "Encours",
                   observation: orderData['observation'] as String,
                 );
                 print('Order final: $order');
@@ -242,28 +260,27 @@ class AddOrder extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Succès', style: TextStyle(color: Colors.green)),
-                      content: Text('Commande passée avec succès!', style: TextStyle(color: Colors.black)),
+                      title: const Text('Succès', style: TextStyle(color: Colors.green)),
+                      content: const Text('Commande passée avec succès!', style: TextStyle(color: Colors.black)),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).pushNamedAndRemoveUntil('/orderlist', (Route<dynamic> route) => false);
                           },
-                          child: Text('OK', style: TextStyle(color: Colors.green)),
+                          child: const Text('OK', style: TextStyle(color: Colors.green)),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Valider', style: TextStyle(color: Colors.green)),
+              child: const Text('Valider', style: TextStyle(color: Colors.green)),
             ),
           ],
         );
       },
     );
   }
-
-
 }
+

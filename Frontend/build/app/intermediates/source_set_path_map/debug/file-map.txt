@@ -11,5 +11,7 @@ com.example.ordering_app-rs-9 C:\Users\rania\OneDrive\Desktop\ordering_app\Front
 com.example.ordering_app-mergeDebugResources-10 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
 com.example.ordering_app-mergeDebugResources-11 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
 com.example.ordering_app-merged_res-12 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\app\intermediates\merged_res\debug
-com.example.ordering_app-packaged_res-13 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\flutter_secure_storage\intermediates\packaged_res\debug
-com.example.ordering_app-packaged_res-14 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\path_provider_android\intermediates\packaged_res\debug
+com.example.ordering_app-packaged_res-13 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\connectivity_plus\intermediates\packaged_res\debug
+com.example.ordering_app-packaged_res-14 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\flutter_secure_storage\intermediates\packaged_res\debug
+com.example.ordering_app-packaged_res-15 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\path_provider_android\intermediates\packaged_res\debug
+com.example.ordering_app-packaged_res-16 C:\Users\rania\OneDrive\Desktop\ordering_app\Frontend\build\shared_preferences_android\intermediates\packaged_res\debug

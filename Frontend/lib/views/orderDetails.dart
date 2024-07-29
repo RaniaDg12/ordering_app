@@ -6,9 +6,9 @@ class orderDetails extends StatelessWidget {
   final Order order;
 
   const orderDetails({
-    Key? key,
+    super.key,
     required this.order,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,20 +16,20 @@ class orderDetails extends StatelessWidget {
       length: 2, // Number of tabs
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(70.0),
+          preferredSize: const Size.fromHeight(70.0),
           child: AppBar(
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
-            title: Text(
+            title: const Text(
               "Détails Commande",
               style: TextStyle(color: Colors.white),
             ),
             flexibleSpace: ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
               ),
@@ -62,7 +62,7 @@ class orderDetails extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.green.shade300,
                   ),
-                  tabs: [
+                  tabs: const [
                     Tab(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +86,7 @@ class orderDetails extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 14, width: 14),
+              const SizedBox(height: 14, width: 14),
               // Tab View
               Expanded(
                 child: TabBarView(
@@ -95,7 +95,7 @@ class orderDetails extends StatelessWidget {
                     ListView(
                       children: [
                         _buildDetailRow("ID Commande", order.id),
-                        _buildDetailRow("Etat commande", describeEnum(order.etatCommande)),
+                        _buildDetailRow("Etat commande", order.etatCommande),
                         _buildDetailRow("Site", order.site),
                         _buildDetailRow("Nom client", order.clientName),
                         _buildDateFields(order.dateCommande, order.dateLivraison),
@@ -111,18 +111,18 @@ class orderDetails extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                           elevation: 4,
                           shadowColor: Colors.black45,
                           child: Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(order.articles[index].articleName, style: TextStyle(fontSize: 16)),
+                                Text(order.articles[index].articleName, style: const TextStyle(fontSize: 16)),
                                 Text(
                                   '${order.articles[index].quantity} ${order.articles[index].unit}',
-                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -141,6 +141,7 @@ class orderDetails extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value, {IconData? icon}) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -148,7 +149,7 @@ class orderDetails extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(10),
@@ -157,7 +158,7 @@ class orderDetails extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.2),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3), // changes position of shadow
                   ),
                 ],
               ),
@@ -174,15 +175,15 @@ class orderDetails extends StatelessWidget {
                       children: [
                         Text(
                           label,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           value,
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ],
                     ),
@@ -202,7 +203,7 @@ class orderDetails extends StatelessWidget {
         Expanded(
           child: _buildDetailRow("Date commande", dateCommande, icon: Icons.calendar_today),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: _buildDetailRow("Date livraison", dateLivraison, icon: Icons.calendar_today),
         ),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/orderProvider.dart';
 import '../models/order.dart';
 import '../views/orderDetails.dart';
 
 class OrderList extends StatelessWidget {
+  const OrderList({super.key});
+
   @override
   Widget build(BuildContext context) {
     TextEditingController searchController = TextEditingController();
@@ -19,7 +22,7 @@ class OrderList extends StatelessWidget {
             child: Image.asset('assets/logo.png', fit: BoxFit.contain),
           ),
         ),
-        title: Text(
+        title: const Text(
           "Liste Commande",
           style: TextStyle(
             fontSize: 22.0,
@@ -33,7 +36,7 @@ class OrderList extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, '/');
               },
-              icon: Icon(Icons.logout, color: Colors.green),
+              icon: const Icon(Icons.logout, color: Colors.green),
             ),
           ),
         ],
@@ -53,17 +56,17 @@ class OrderList extends StatelessWidget {
                     controller: searchController,
                     decoration: InputDecoration(
                       hintText: "Rechercher",
-                      prefixIcon: Icon(Icons.search, color: Colors.green),
+                      prefixIcon: const Icon(Icons.search, color: Colors.green),
                       suffixIcon: searchController.text.isNotEmpty
                           ? IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           searchController.clear();
                           orderModel.fetchOrders();
                         },
                       )
                           : IconButton(
-                        icon: Icon(Icons.filter_list),
+                        icon: const Icon(Icons.filter_list),
                         onPressed: () {},
                       ),
                       border: OutlineInputBorder(
@@ -72,13 +75,13 @@ class OrderList extends StatelessWidget {
                       ),
                       filled: true,
                       fillColor: Colors.grey[100],
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14.0),
-                        borderSide: BorderSide(color: Colors.green, width: 2.0),
+                        borderSide: const BorderSide(color: Colors.green, width: 2.0),
                       ),
                     ),
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                     onSubmitted: (value) async {
                       if (value.isNotEmpty) {
                         await orderModel.fetchOrderById(value.trim());
@@ -88,7 +91,7 @@ class OrderList extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -96,42 +99,42 @@ class OrderList extends StatelessWidget {
                       onPressed: () async {
                         await orderModel.fetchOrders();
                       },
-                      child: Text(
+                      child: const Text(
                         "Tous",
                         style: TextStyle(fontSize: 16, color: Colors.green),
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        await orderModel.fetchByStatus('Termine');
+                        await orderModel.fetchByStatus('Envoye');
                       },
-                      child: Text(
-                        "Terminé",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
+                      ),
+                      child: const Text(
+                        "Envoyé",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () async {
                         await orderModel.fetchByStatus('Encours');
                       },
-                      child: Text(
-                        "En cours",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
+                      ),
+                      child: const Text(
+                        "En cours",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 if (orderModel.isLoading)
-                  Center(child: CircularProgressIndicator())
+                  const Center(child: CircularProgressIndicator())
                 else if (orderModel.orders.isEmpty) // Show this only if orders list is empty
-                  Center(child: Text('Aucune commande trouvée.'))
+                  const Center(child: Text('Aucune commande trouvée.'))
                 else
                   Expanded(
                     child: SingleChildScrollView(
@@ -151,26 +154,26 @@ class OrderList extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(18.0),
           topRight: Radius.circular(18.0),
         ),
         child:
         BottomAppBar(
-          child: Container(
+          child: SizedBox(
             height: 16.0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 IconButton(
-                  icon: Icon(Icons.home, size: 32),
+                  icon: const Icon(Icons.home, size: 32),
                   onPressed: () {
                     Navigator.pushNamed(context, '/orderlist');
                   },
                 ),
-                SizedBox(width: 48),
+                const SizedBox(width: 48),
                 IconButton(
-                  icon: Icon(Icons.sync, size: 32),
+                  icon: const Icon(Icons.sync, size: 32),
                   onPressed: () {
                     Navigator.pushNamed(context, '/sync');
                   },
@@ -186,11 +189,11 @@ class OrderList extends StatelessWidget {
         height: 85.0,
         child: FloatingActionButton(
           backgroundColor: Colors.green,
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           hoverElevation: 10,
           splashColor: Colors.green,
           elevation: 4,
-          child: Icon(Icons.add, size: 32),
+          child: const Icon(Icons.add, size: 32),
           onPressed: () {
             Navigator.pushNamed(context, '/addOrder');
           },
@@ -206,13 +209,14 @@ class OrderCard extends StatelessWidget {
   final Order order;
 
   const OrderCard({
-    Key? key,
+    super.key,
     required this.order,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    Color lineColor = order.etatCommande == Status.Termine ? Colors.green : Colors.orange;
+    Color lineColor = order.etatCommande == "Envoye" ? Colors.green : Colors.orange;
+
 
     return GestureDetector(
       onTap: () {
@@ -249,14 +253,14 @@ class OrderCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         order.id,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(width: 8), // Add some spacing between the two texts
+                    const SizedBox(width: 8), // Add some spacing between the two texts
                     Text(
                       "${order.articles.length} articles",
                       style: TextStyle(
@@ -266,22 +270,22 @@ class OrderCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 10), // Increased spacing
+                const SizedBox(height: 10), // Increased spacing
                 Text("Client: ${order.clientName}"),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today),
-                    SizedBox(width: 8),
+                    const Icon(Icons.calendar_today),
+                    const SizedBox(width: 8),
                     Text(
-                      "${order.dateCommande}",
+                      order.dateCommande,
                     ),
-                    SizedBox(width: 16), // Added spacing between date and site
-                    Icon(Icons.location_on),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 16), // Added spacing between date and site
+                    const Icon(Icons.location_on),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "${order.site}",
+                        order.site,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

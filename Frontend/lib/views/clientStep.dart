@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/order.dart';
 
 class ClientStep extends StatelessWidget {
   final Map<String, dynamic> orderData;
   final Function(String, dynamic) onUpdate;
 
-  ClientStep({required this.orderData, required this.onUpdate});
+  ClientStep({super.key, required this.orderData, required this.onUpdate});
 
   final List<String> sites = ['AGAREB', 'CAPBON'];
   final List<String> clients = ['Ahmed', 'Sami', 'Fawzi'];
@@ -33,14 +32,14 @@ class ClientStep extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
     ),
     ],
     ),
            child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
               labelText: 'Choisir un site',
-              prefixIcon: Icon(Icons.location_on),
+              prefixIcon: const Icon(Icons.location_on),
               filled: true,
               fillColor: Colors.grey.shade100,
               border: OutlineInputBorder(
@@ -49,7 +48,7 @@ class ClientStep extends StatelessWidget {
               ),
             ),
             items: sites.map((site) {
-              return DropdownMenuItem(child: Text(site), value: site);
+              return DropdownMenuItem(value: site, child: Text(site));
             }).toList(),
             onChanged: (value) {
               print('Selected site: $value');
@@ -58,7 +57,7 @@ class ClientStep extends StatelessWidget {
             },
           ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -66,14 +65,14 @@ class ClientStep extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
     ),
     ],
     ),
            child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
               labelText: 'Choisir un client',
-              prefixIcon: Icon(Icons.person),
+              prefixIcon: const Icon(Icons.person),
               filled: true,
               fillColor: Colors.grey.shade100,
               border: OutlineInputBorder(
@@ -82,7 +81,7 @@ class ClientStep extends StatelessWidget {
               ),
             ),
             items: clients.map((client) {
-              return DropdownMenuItem(child: Text(client), value: client);
+              return DropdownMenuItem(value: client, child: Text(client));
             }).toList(),
             onChanged: (value) {
               print('Selected client: $value');
@@ -91,7 +90,7 @@ class ClientStep extends StatelessWidget {
             },
           ),
     ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -99,7 +98,7 @@ class ClientStep extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3), // changes position of shadow
+                  offset: const Offset(0, 3), // changes position of shadow
                 ),
               ],
             ),
@@ -121,7 +120,7 @@ class ClientStep extends StatelessWidget {
             },
           ),
     ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -129,7 +128,7 @@ class ClientStep extends StatelessWidget {
                    color: Colors.grey.withOpacity(0.2),
                    spreadRadius: 2,
                    blurRadius: 5,
-                   offset: Offset(0, 3), // changes position of shadow
+                   offset: const Offset(0, 3), // changes position of shadow
     ),
     ],
     ),
@@ -166,7 +165,7 @@ class ClientStep extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: Colors.green, // Header background color
               onPrimary: Colors.white, // Header text color
               onSurface: Colors.black45, // Body text color

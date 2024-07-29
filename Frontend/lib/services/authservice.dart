@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import '../constants/constants.dart';
+import '../utils/utils.dart';
 
 class AuthService {
-  final String baseUrl = 'http://192.168.56.1:3000';
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   Future<String?> signIn(BuildContext context, String username, String password) async {
     // Check internet connectivity
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
+    if (await Utils.checkNetworkConnectivity()) {
       // If no internet connection, attempt to use cached token
       String? token = await storage.read(key: 'token');
       if (token != null) {
@@ -41,6 +40,7 @@ class AuthService {
         throw Exception(responseData['message']);
       }
     }
+    return null;
   }
 
   Future<void> signOut() async {

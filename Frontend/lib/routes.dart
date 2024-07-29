@@ -7,9 +7,9 @@ import 'views/addOrder.dart';
 import 'views/sync.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
-  '/': (context) => Bienvenue(),
-  '/signin': (context) => SignIn(),
-  '/orderlist': (context) => OrderList(),
-  '/addOrder': (context) => AddOrder(),
-  '/sync': (context) => Synchronisation(),
+  '/': (context) => const Bienvenue(),
+  '/signin': (context) => const SignIn(),
+  '/orderlist': (context) => const OrderList(),
+  '/addOrder': (context) => const AddOrder(),
+  '/sync': (context) => const Synchronisation(),
 };

@@ -1,22 +1,15 @@
-/* import 'views/Bienvenue.dart';
-import 'views/SignIn.dart';
-import 'models/SignIn.dart';
-import 'views/orderList.dart';
-import 'views/addOrder.dart';
-import 'views/sync.dart';*/
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'models/enums/priority.dart';
 import 'providers.dart';
 import 'routes.dart';
 
 
-import 'models/LocalOrder.dart';
-import 'models/order.dart';
+import 'models/LocalModels/LocalOrder.dart';
+import 'models/LocalModels/LocalArticle.dart';
 
 
 
@@ -26,10 +19,10 @@ void main() async{
   final appDocumentDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocumentDir.path);
 
+
   Hive.registerAdapter(LocalOrderAdapter());
   Hive.registerAdapter(LocalArticleAdapter());
   Hive.registerAdapter<Priority>(PriorityAdapter());
-  Hive.registerAdapter<Status>(StatusAdapter());
 
   await Hive.openBox<LocalOrder>('orders');
 
@@ -42,7 +35,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: appProviders,
+      providers: Providers.providers,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/order.dart';
+import '../models/enums/priority.dart';
 
 class AutresStep extends StatelessWidget {
   final Map<String, dynamic> orderData;
@@ -7,7 +7,7 @@ class AutresStep extends StatelessWidget {
 
   final List<String> priorities = ['Faible', 'Moyenne', 'Eleve'];
 
-  AutresStep({required this.orderData, required this.onUpdate});
+  AutresStep({super.key, required this.orderData, required this.onUpdate});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class AutresStep extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 2,
                 blurRadius: 5,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
     ),
     ],
     ),
@@ -40,7 +40,7 @@ class AutresStep extends StatelessWidget {
             ),
           ),
           items: priorities.map((priority) {
-            return DropdownMenuItem(child: Text(priority), value: priority);
+            return DropdownMenuItem(value: priority, child: Text(priority));
           }).toList(),
           onChanged: (value) {
             orderData['priority'] = _getPriorityEnum(value!);
@@ -48,7 +48,7 @@ class AutresStep extends StatelessWidget {
           },
         ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             boxShadow: [
@@ -56,7 +56,7 @@ class AutresStep extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 2,
                 blurRadius: 5,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               ),
             ],
           ),

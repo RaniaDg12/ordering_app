@@ -1,10 +1,20 @@
 import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'providers/signinProvider.dart';
+import 'providers/orderProvider.dart';
+import 'providers/OrderStepProvider.dart';
 
-import 'models/SignIn.dart';
-import 'models/order.dart';
+class Providers {
+  Providers._();
 
-List<SingleChildWidget> appProviders = [
-  ChangeNotifierProvider(create: (_) => SignInModel()),
-  ChangeNotifierProvider(create: (_) => OrderModel()),
-];
+  static final providers = [
+    ChangeNotifierProvider<SignInModel>(
+      create: (_) => SignInModel(),
+    ),
+    ChangeNotifierProvider<OrderModel>(
+      create: (_) => OrderModel(),
+    ),
+    ChangeNotifierProvider<OrderStepProvider>(
+      create: (_) => OrderStepProvider(),
+    ),
+  ].toList();
+}

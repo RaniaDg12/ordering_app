@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/SignIn.dart';
+import '../providers/signinProvider.dart';
 
 class SignIn extends StatelessWidget {
+  const SignIn({super.key});
+
   @override
   Widget build(BuildContext context) {
     final signInModel = Provider.of<SignInModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70.0),
+       child: AppBar(
         elevation: 1,
-        shadowColor: Colors.grey,
+        shadowColor: Colors.grey.shade100,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -20,12 +24,28 @@ class SignIn extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
+            SizedBox(
               width: 100,
               child: Image.asset('assets/logo.png'),
             ),
           ],
         ),
+         flexibleSpace: ClipRRect(
+           borderRadius: const BorderRadius.only(
+             bottomLeft: Radius.circular(15),
+             bottomRight: Radius.circular(15),
+           ),
+           child: Container(
+             decoration: BoxDecoration(
+               gradient: LinearGradient(
+                 colors: [Colors.green.shade50, Colors.grey.shade100],
+                 begin: Alignment.topLeft,
+                 end: Alignment.bottomRight,
+               ),
+             ),
+           ),
+         ),
+       ),
       ),
       body: Center(
         child: Padding(
@@ -34,52 +54,80 @@ class SignIn extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Bienvenue !',
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 40),
-                TextField(
+                const SizedBox(height: 40),
+                Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child:
+                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Nom utilisateur',
                     filled: true,
-                    fillColor: Colors.grey.shade200,
+                    fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
+                    prefixIcon: const Icon(Icons.person_outline),
                   ),
                   onChanged: (value) => signInModel.setUsername(value),
                 ),
-                SizedBox(height: 10),
-                TextField(
+                ),
+                 const SizedBox(height: 10),
+                Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child:
+                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
                     filled: true,
-                    fillColor: Colors.grey.shade200,
+                    fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
                     ),
+                    prefixIcon: const Icon(Icons.lock_outline),
                   ),
                   obscureText: true,
                   onChanged: (value) => signInModel.setPassword(value),
                 ),
-                SizedBox(height: 10),
+                ),
+                const SizedBox(height: 10),
                 if (signInModel.errorMessage != null)
                   Text(
                     signInModel.errorMessage!,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextButton(
                   onPressed: () {},
-                  child: Text(
+                  child: const Text(
                     'Mot de passe oublié ?',
                     style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: signInModel.isLoading
                       ? null
@@ -89,22 +137,22 @@ class SignIn extends StatelessWidget {
                       Navigator.pushNamed(context, '/orderlist');
                     }
                   },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                    child: signInModel.isLoading
-                        ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                        : Text(
-                      'Se connecter',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+                    child: signInModel.isLoading
+                        ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                        : const Text(
+                      'Se connecter',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),

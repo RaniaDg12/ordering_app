@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/order.dart';
+import '../constants/constants.dart';
 
 class OrderService {
-  final String baseUrl = 'http://192.168.56.1:3000';
 
   Future<List<Order>> fetchOrders(String token) async {
     try {
@@ -52,8 +52,6 @@ class OrderService {
       rethrow;
     }
   }
-
-
 
   Future<List<Order>> fetchByStatus(String etatCommande, String token) async {
     try {
