@@ -218,8 +218,11 @@ class AddOrder extends StatelessWidget {
   }
 
   void _showConfirmationDialog(BuildContext context, Map<String, dynamic> orderData) {
+    // Obtain the context of the nearest Navigator, which is guaranteed to be valid
+    final navigatorContext = Navigator.of(context).context;
+
     showDialog(
-      context: context,
+      context: navigatorContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmation', style: TextStyle(color: Colors.green)),
@@ -256,8 +259,10 @@ class AddOrder extends StatelessWidget {
                 print('Order final: $order');
 
                 await context.read<OrderModel>().addOrder(order);
+
+                // Use navigatorContext for the next dialog
                 showDialog(
-                  context: context,
+                  context: navigatorContext,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Succès', style: TextStyle(color: Colors.green)),
@@ -282,5 +287,7 @@ class AddOrder extends StatelessWidget {
       },
     );
   }
+
+
 }
 

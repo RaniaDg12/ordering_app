@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import '../models/article.dart';
-import '../providers/OrderStepProvider.dart';
 
-class ArticlesStep extends StatelessWidget {
+class ArticlesStep extends StatefulWidget {
   final Map<String, dynamic> orderData;
   final Function(String, dynamic) onUpdate;
 
   ArticlesStep({super.key, required this.orderData, required this.onUpdate});
 
+  @override
+  _ArticlesStepState createState() => _ArticlesStepState();
+}
+
+class _ArticlesStepState extends State<ArticlesStep> {
   final List<String> articles = ['huile de mais', 'huile de tournesol'];
   final List<String> units = ['Lt', 'daL', 'kL'];
+  final TextEditingController quantityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    print('Current Order Data in ArticleStep: $orderData');
+    print('Current Order Data in ArticleStep: ${widget.orderData}');
 
     return SingleChildScrollView(
       child: Column(
@@ -40,13 +45,13 @@ class ArticlesStep extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
               ),
-              value: orderData['article'],
+              value: widget.orderData['article'],
               items: articles.map((article) {
                 return DropdownMenuItem(value: article, child: Text(article));
               }).toList(),
               onChanged: (value) {
-                orderData['article'] = value!;
-                onUpdate('article', value);
+                widget.orderData['article'] = value!;
+                widget.onUpdate('article', value);
               },
             ),
           ),
@@ -72,13 +77,13 @@ class ArticlesStep extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
               ),
-              value: orderData['unit'],
+              value: widget.orderData['unit'],
               items: units.map((unit) {
                 return DropdownMenuItem(value: unit, child: Text(unit));
               }).toList(),
               onChanged: (value) {
-                orderData['unit'] = value!;
-                onUpdate('unit', value);
+                widget.orderData['unit'] = value!;
+                widget.onUpdate('unit', value);
               },
             ),
           ),
@@ -95,6 +100,7 @@ class ArticlesStep extends StatelessWidget {
               ],
             ),
             child: TextFormField(
+              controller: quantityController,
               decoration: InputDecoration(
                 labelText: 'Quantité',
                 filled: true,
@@ -108,8 +114,8 @@ class ArticlesStep extends StatelessWidget {
               onChanged: (value) {
                 int? quantity = int.tryParse(value);
                 if (quantity != null) {
-                  orderData['quantity'] = quantity;
-                  onUpdate('quantity', quantity);
+                  widget.orderData['quantity'] = quantity;
+                  widget.onUpdate('quantity', quantity);
                 }
               },
             ),
@@ -134,32 +140,35 @@ class ArticlesStep extends StatelessWidget {
 
   void _addArticleToOrder() {
     // Ensure orderData['articles'] is initialized as a List if null
-    orderData['articles'] ??= [];
+    widget.orderData['articles'] ??= [];
 
-    int quantity = orderData['quantity'] ?? 0;
+    int quantity = widget.orderData['quantity'] ?? 0;
 
     // Create a map representing the article and add it to the list
     Article article = Article(
       id: '', // Ensure to assign proper IDs if necessary
-      articleName: orderData['article'] as String,
+      articleName: widget.orderData['article'] as String,
       quantity: quantity,
-      unit: orderData['unit'] as String,
+      unit: widget.orderData['unit'] as String,
     );
 
     // Add article to the list
-    orderData['articles'].add(article);
+    widget.orderData['articles'].add(article);
 
     // Clear fields after adding article
-    orderData['article'] = null;
-    orderData['unit'] = null;
-    orderData['quantity'] = null;
+    setState(() {
+      widget.orderData['article'] = null;
+      widget.orderData['unit'] = null;
+      widget.orderData['quantity'] = null;
+      quantityController.clear(); // Clear the quantity field
+    });
 
     // Notify parent widget about articles update
-    onUpdate('articles', orderData['articles']);
+    widget.onUpdate('articles', widget.orderData['articles']);
   }
 
   Widget _buildArticleList() {
-    if (orderData['articles'] == null || orderData['articles'].isEmpty) {
+    if (widget.orderData['articles'] == null || widget.orderData['articles'].isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -167,9 +176,9 @@ class ArticlesStep extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: orderData['articles'].length,
+      itemCount: widget.orderData['articles'].length,
       itemBuilder: (context, index) {
-        Article article = orderData['articles'][index] as Article;
+        Article article = widget.orderData['articles'][index] as Article;
         return Card(
           child: ListTile(
             title: Text(article.articleName),
