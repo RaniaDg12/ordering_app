@@ -24,5 +24,5 @@ export class ArticleService {
           throw new NotFoundException(`Article with name ${name} not found`);
         }
         return article;
-      }
+    }
 }

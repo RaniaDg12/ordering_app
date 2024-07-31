@@ -23,6 +23,7 @@ export class AuthService {
     const { name, password } = signinDto;
 
     const user = await this.userModel.findOne({ name });
+    this.logger.debug(`user: ${name}`);
 
     if (!user) {
       this.logger.error('User not found');
@@ -37,6 +38,7 @@ export class AuthService {
     }
 
     const token = this.jwtService.sign({ id: user._id });
+    this.logger.debug(`token: ${token}`);
 
     return { token };
   }

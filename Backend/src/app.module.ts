@@ -9,6 +9,9 @@ import { PassportModule } from '@nestjs/passport';
 import { env } from 'process';
 import { config } from 'dotenv';
 import { OrderModule } from './order/order.module';
+import { ArticleModule } from './article/article.module';
+import { SiteModule } from './site/site.module';
+import { ClientModule } from './client/client.module';
 config();
 
 @Module({
@@ -18,7 +21,7 @@ config();
       isGlobal: true,}
     ),
   MongooseModule.forRoot('mongodb://localhost:27017/agrimed'),
-  AuthModule,JwtModule, OrderModule],
+  AuthModule,JwtModule, OrderModule, ArticleModule, SiteModule, ClientModule],
   controllers: [AppController],
   providers: [AppService],
 })
