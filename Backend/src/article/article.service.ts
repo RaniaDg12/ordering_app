@@ -25,4 +25,18 @@ export class ArticleService {
         }
         return article;
     }
+
+    async update(article: Partial<Article>): Promise<Article> {
+        console.log('Updating article with data:', article);
+        const updatedArticle = await this.articleModel.findByIdAndUpdate(article._id, article, { new: true });
+        console.log('Updated article:', updatedArticle);
+        return updatedArticle;
+    }
+
+    async delete(id: string): Promise<Article> {
+        console.log(`Deleting aticle with ID: ${id}`);
+        const deletedArticle = await this.articleModel.findByIdAndDelete(id);
+        console.log('Deleted article:', deletedArticle);
+        return deletedArticle;
+    } 
 }
