@@ -25,4 +25,19 @@ export class SiteService {
         }
         return site;
     }
+
+    async update(site: Partial<Site>): Promise<Site> {
+        console.log('Updating site with data:', site);
+        const updatedSite = await this.siteModel.findByIdAndUpdate(site._id, site, { new: true });
+        console.log('Updated site:', updatedSite);
+        return updatedSite;
+    }
+
+    async delete(id: string): Promise<Site> {
+        console.log(`Deleting site with ID: ${id}`);
+        const deletedSite = await this.siteModel.findByIdAndDelete(id);
+        console.log('Deleted site:', deletedSite);
+        return deletedSite;
+    } 
+
 }

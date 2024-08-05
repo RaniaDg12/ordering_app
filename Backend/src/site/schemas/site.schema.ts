@@ -7,6 +7,9 @@ export type SiteDocument = Site & Document;
 export class Site extends Document {
     
   @Prop({ required: true })
+  code: string;
+
+  @Prop({ required: true })
   name: string;
 }
 
