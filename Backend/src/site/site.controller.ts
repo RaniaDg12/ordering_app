@@ -26,6 +26,11 @@ export class SiteController {
       return this.siteService.findByName(name);
     }
 
+    @Get('count/all')
+    async countAll() {
+      return this.siteService.countAll();
+    }
+
     @Put('update/:id')
     async update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto): Promise<Site> {
         const updatedSite: Partial<Site> = { ...updateSiteDto, _id: id };

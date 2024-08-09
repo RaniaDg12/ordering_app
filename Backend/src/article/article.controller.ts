@@ -25,6 +25,11 @@ export class ArticleController {
       return this.articleService.findByName(name);
     }
 
+    @Get('count/all')
+    async countAll() {
+      return this.articleService.countAll();
+    }
+
     @Put('update/:id')
     async update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto): Promise<Article> {
         const updatedArticle: Partial<Article> = { ...updateArticleDto, _id: id };

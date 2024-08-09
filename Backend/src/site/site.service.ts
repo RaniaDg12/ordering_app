@@ -26,6 +26,10 @@ export class SiteService {
         return site;
     }
 
+    async countAll(): Promise<number> {
+       return this.siteModel.countDocuments().exec();
+    }
+
     async update(site: Partial<Site>): Promise<Site> {
         console.log('Updating site with data:', site);
         const updatedSite = await this.siteModel.findByIdAndUpdate(site._id, site, { new: true });

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, UnauthorizedException, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, UnauthorizedException, Logger, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -10,6 +10,53 @@ export class OrderController {
   private readonly logger = new Logger(OrderController.name);
   
   constructor(private readonly orderService: OrderService) {}
+
+  @Get('all')
+  async findAllOrders(): Promise<Order[]> {
+    return this.orderService.findAllOrders();
+  }
+  
+  @Put('update/:id')
+  async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
+    return this.orderService.update(id, updateOrderDto);
+  }
+
+  
+  @Delete('delete/:id')
+  async remove(@Param('id') id: string): Promise<Order> {
+    return this.orderService.remove(id);
+  }
+  
+  @Get('count/all')
+  async countAll() {
+    return this.orderService.countAll();
+  }
+
+  @Get('sites/count/:site')
+  async countBySiteName(@Param('site') site: string) {
+    return this.orderService.countBySiteName(site);
+  }
+
+  @Get('users/count/:user')
+  async countByUserName(@Param('user') user: string) {
+    return this.orderService.countByUserName(user);
+  }
+
+  @Get('dates/count/:datecommande')
+  async countByDateCommande(@Param('datecommande') dateCommande: string) {
+    console.log('Received dateCommande:', dateCommande); // Log received parameter
+    return this.orderService.countByDateCommande(dateCommande);
+  }
+
+
+  @Get('dates/count')
+  async countByDateRange() {
+    return this.orderService.countByDateRange();
+  }
+
+
+
+
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
@@ -39,18 +86,6 @@ export class OrderController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
-    return this.orderService.update(id, updateOrderDto);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<Order> {
-    return this.orderService.remove(id);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
   @Get('status/:etatCommande')
   async findByEtatCommande(@Param('etatCommande') etatCommande: string, @Req() req): Promise<Order[]> {
     if (!req.user || !req.user.userId) {
@@ -63,6 +98,9 @@ export class OrderController {
     ); 
   }
 
+
+  
+  
   
 }
 

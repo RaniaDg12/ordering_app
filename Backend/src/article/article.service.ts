@@ -26,6 +26,10 @@ export class ArticleService {
         return article;
     }
 
+    async countAll(): Promise<number> {
+        return this.articleModel.countDocuments().exec();
+     }
+
     async update(article: Partial<Article>): Promise<Article> {
         console.log('Updating article with data:', article);
         const updatedArticle = await this.articleModel.findByIdAndUpdate(article._id, article, { new: true });

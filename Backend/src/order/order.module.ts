@@ -15,11 +15,13 @@ import { Site, SiteSchema } from 'src/site/schemas/site.schema';
 import { Client, ClientSchema } from 'src/client/schemas/client.schema';
 import { Article, ArticleSchema } from 'src/article/schemas/article.schema';
 import { ArticleOrder, ArticleOrderSchema } from 'src/article/schemas/articleOrder.schema';
+import { User, UserSchema } from 'src/auth/schemas/user.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema },
     { name: Site.name, schema: SiteSchema },
     { name: Client.name, schema: ClientSchema },
+    { name: User.name, schema: UserSchema },
     { name: Article.name, schema: ArticleSchema },
     { name: ArticleOrder.name, schema: ArticleOrderSchema },
   ]),
